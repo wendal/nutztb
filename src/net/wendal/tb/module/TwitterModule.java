@@ -88,7 +88,7 @@ public class TwitterModule {
 		if (page < 1)
 			page = 1;
 		Pager pager = dao.createPager(page, 20);
-		Condition cnd = Cnd.format("uid=%d or uid in (select to_uid from tb_following where from_uid=%d) order by id", me.getId(), me.getId());
+		Condition cnd = Cnd.format("uid=%d or uid in (select to_uid from tb_following where from_uid=%d) order by id desc", me.getId(), me.getId());
 		pager.setRecordCount(dao.count(TimeLine.class, cnd));
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("user", setCountData(me));

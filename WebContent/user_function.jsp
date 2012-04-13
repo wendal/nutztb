@@ -21,6 +21,7 @@ $(function () {
 			}
 			$(this).removeattr("disable","disable");
 		},"json");
+		$(this).hide();
 		return false;
 	});
 
