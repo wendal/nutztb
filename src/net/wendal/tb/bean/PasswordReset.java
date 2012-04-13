@@ -1,38 +1,31 @@
 package net.wendal.tb.bean;
 
-import java.sql.Timestamp;
-
+import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
 
 @Table("tb_password_reset")
-@TableIndexes({@Index(fields={"token"}, name="reset_token", unique=true)})
-public class PasswordReset {
+@TableIndexes({@Index(fields={"id"}, name = "id", unique=true),
+			   @Index(fields={"token"}, name="reset_token", unique=true)})
+public class PasswordReset extends BaseBean {
 
 	@Name
-	private String uid;
+	private long uid;
+	@Column
 	private String token;
-	private Timestamp createTime;
-	public String getUid() {
-		return uid;
-	}
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
 	public String getToken() {
 		return token;
 	}
 	public void setToken(String token) {
 		this.token = token;
 	}
-	public Timestamp getCreateTime() {
-		return createTime;
+	public long getUid() {
+		return uid;
 	}
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
+	public void setUid(long uid) {
+		this.uid = uid;
 	}
-	
 	
 }

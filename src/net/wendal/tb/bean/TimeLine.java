@@ -1,7 +1,5 @@
 package net.wendal.tb.bean;
 
-import java.sql.Timestamp;
-
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.One;
@@ -9,36 +7,26 @@ import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
 
 @Table("tb_timeline")
-@TableIndexes({@Index(fields={"uid"}, name = "uid"),
-			   @Index(fields={"type"}, name = "type"),
-			   @Index(fields={"contentId"}, name = "contentId")})
-public class TimeLine {
-
+@TableIndexes({
+			   @Index(fields={"uid"}, name = "uid", unique=false),
+			   @Index(fields={"type"}, name = "type", unique=false),
+			   @Index(fields={"ref"}, name = "ref", unique=false),
+			   @Index(fields={"uid","type","ref"}, name = "a_tweet", unique=true)})
+public class TimeLine extends BaseBean {
+	
 	@Column
-	private String uid;
+	private long uid;
 	
 	@Column("tp")
 	private int type;
 	
-	@Column("cid")
-	private String contentId;
-	
 	@Column
-	private String data;
-	
-	@Column
-	private Timestamp createTime;
+	private long ref;
 	
 	@One(field="uid", target=User.class)
 	private User owner;
 
-	public String getUid() {
-		return uid;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
+//
 
 	public int getType() {
 		return type;
@@ -48,28 +36,12 @@ public class TimeLine {
 		this.type = type;
 	}
 
-	public String getContentId() {
-		return contentId;
+	public long getRef() {
+		return ref;
 	}
 
-	public void setContentId(String contentId) {
-		this.contentId = contentId;
-	}
-
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
+	public void setRef(long ref) {
+		this.ref = ref;
 	}
 
 	public User getOwner() {
@@ -78,6 +50,14 @@ public class TimeLine {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+
+	public long getUid() {
+		return uid;
+	}
+
+	public void setUid(long uid) {
+		this.uid = uid;
 	}
 	
 	

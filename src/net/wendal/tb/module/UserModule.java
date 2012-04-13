@@ -1,7 +1,5 @@
 package net.wendal.tb.module;
 
-import java.sql.Timestamp;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -71,7 +69,6 @@ public class UserModule {
 				me.setEmail(email);
 				String passwd = R.sg(12).next();
 				me.setPasswd(xMD5(passwd));
-				me.setCreateTime(new Timestamp(System.currentTimeMillis()));
 				dao.insert(me);
 				if (mailService.send(email, "推爸注册确认邮件", "Your password : " + passwd)) {
 					return Ajax.ok();
@@ -112,7 +109,6 @@ public class UserModule {
 		PasswordReset reset = new PasswordReset();
 		reset.setUid(dao.fetch(User.class, Cnd.where("email", "=", email)).getId());
 		reset.setToken(token);
-		reset.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		dao.insert(reset);
 		String url = req.getRequestURL() +"/callback?token=" + token;
 		mailService.send(email, "推爸 密码重置请求", "Reset URL --> " + url);

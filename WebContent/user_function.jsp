@@ -10,6 +10,7 @@
 <script type="text/javascript">
 $(function () {
 	$("#regForm").submit(function () {
+		$(this).attr("disable","disable");
 		var data = $(this).serialize();
 		$.post("${base}/user/reg",data, function(resp) {
 			if (resp.ok) {
@@ -18,6 +19,7 @@ $(function () {
 			} else {
 				alert("注册失败! " + resp.msg);
 			}
+			$(this).removeattr("disable","disable");
 		},"json");
 		return false;
 	});
@@ -74,6 +76,17 @@ $(function () {
 		},"json");
 		return false;
 	});
+	
+	$("#logoutForm").submit(function () {
+		$.post("${base}/user/logout", null, function(resp) {
+			if (resp.ok) {
+				alert("登出成功!");
+			} else {
+				alert("登出失败! " + resp.msg);
+			}
+		},"json");
+		return false;
+	});
 });
 </script>
 </head>
@@ -107,6 +120,13 @@ $(function () {
 </div>
 
 <div>
+	<h1>退出登陆</h1><p/>
+	<form action="#" id="logoutForm">
+		<input type="submit" value="登出"></input><p/>
+	</form>
+</div>
+
+<div>
 	<h1>关于我</h1><p/>
 	<form action="#" id="meForm">
 		<input type="submit" value="获取"></input><p/>
@@ -117,7 +137,7 @@ $(function () {
 	<h1>更新信息</h1><p/>
 	<form action="#" id="updateForm">
 		昵称:<input type="text" name="nickName"></input><p/>
-		密码:<input type="text" name="passwd"></input><p/>
+		密码:<input type="password" name="passwd"></input><p/>
 		<input type="submit" value="更新"></input><p/>
 	</form>
 </div>

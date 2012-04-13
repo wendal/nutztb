@@ -1,6 +1,5 @@
 package net.wendal.tb.bean;
 
-import java.sql.Timestamp;
 import java.util.Set;
 
 import org.nutz.dao.entity.annotation.ColDefine;
@@ -9,23 +8,18 @@ import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.ManyMany;
-import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Prev;
-import org.nutz.dao.entity.annotation.Readonly;
 import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
 import org.nutz.json.JsonField;
 import org.nutz.lang.random.R;
 
 @Table("tb_user")
-@TableIndexes({@Index(fields={"email"}, name="email", unique=true),
+@TableIndexes({
+			   @Index(fields={"email"}, name="email", unique=true),
 	           @Index(fields={"nickName"}, name="nickName", unique=true)})
-public class User {
+public class User extends BaseBean {
 	
-	@Name
-	@Prev(els=@EL("$me.uuid()"))
-	private String id;
-
 	@Column
 	@ColDefine(notNull=true, type = ColType.VARCHAR)
 	private String email;
@@ -38,26 +32,19 @@ public class User {
 	@Prev(els=@EL("$me.uuid()"))
 	private String nickName;
 	
-
-	@Column
-	@Readonly
-	private Timestamp createTime = new Timestamp(System.currentTimeMillis());
-	
 	@JsonField(ignore=true)
 	@Column
 	@ManyMany(from="from_uid",to="to_uid",relation="tb_following", target=User.class)
 	private Set<User> followings;
 	
+	//非数据库字段----------------------------------------
+	private long followingCount;
+	private long followedCount;
+	private long tweetCount;
+	//--------------------------------------------
+	
 	public String uuid() {
 		return R.UU64();
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getEmail() {
@@ -92,13 +79,28 @@ public class User {
 		this.nickName = nickName;
 	}
 
-	public Timestamp getCreateTime() {
-		return createTime;
+	public long getFollowingCount() {
+		return followingCount;
 	}
 
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
+	public void setFollowingCount(long followingCount) {
+		this.followingCount = followingCount;
 	}
-	
-	
+
+	public long getFollowedCount() {
+		return followedCount;
+	}
+
+	public void setFollowedCount(long followedCount) {
+		this.followedCount = followedCount;
+	}
+
+	public long getTweetCount() {
+		return tweetCount;
+	}
+
+	public void setTweetCount(long tweetCount) {
+		this.tweetCount = tweetCount;
+	}
+
 }

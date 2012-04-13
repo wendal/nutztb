@@ -19,6 +19,4 @@ import org.nutz.web.ajax.AjaxViewMaker;
 @Fail("ajax") //配置失败视图,只有抛异常,才会走这个视图的,无其他方式,这种视图,一般就是接受一个异常对象
 @Views({AjaxViewMaker.class}) //注册私有的ViewMaker,这里注册的是支持ajax
 @SetupBy(TbSetup.class) //提供一个Setup接口的实现,在项目启动/关闭时执行一些逻辑
-public class MainModule {
-
-}
+public class MainModule {}
