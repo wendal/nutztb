@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
@@ -183,7 +185,7 @@ public class TwitterModule {
 		if (tc == null)
 			return null;
 		map.put("id", tl.getId());
-		map.put("txt", tc.getText());
+		map.put("txt", toTweetHtml(tc.getText()));
 		map.put("retweet", false);
 		map.put("owner", owner);
 		map.put("my_tweet", false);
@@ -198,5 +200,33 @@ public class TwitterModule {
 		List<User> retweetByUsers = dao.query(User.class, Cnd.format("id in (select uid from tb_timeline where uid=%d and tp=1 and ref=%d)", tl.getUid(), tl.getId()), dao.createPager(1, 5));
 		map.put("retweet_by_users", retweetByUsers);
 		return map;
+	}
+	
+	/**
+	 * 参考 @see http://www.oschina.net/code/snippet_12_9258
+	 * 
+	 */
+	static Pattern referer_pattern = Pattern.compile("@([^@^\\s^:]{1,})([\\s\\:\\,\\;]{0,1})");
+	public String toTweetHtml(String msg) {
+		StringBuilder html = new StringBuilder(); 	
+		Matcher matchr = referer_pattern.matcher(msg);
+		int lastIdx = 0;
+		while (matchr.find()) {
+			String origion_str = matchr.group();
+			String str = origion_str.substring(1, origion_str.length()).trim();
+			html.append(msg.substring(lastIdx, matchr.start()));
+
+			User user = dao.fetch(User.class, Cnd.where("nickName", "=", str));
+			if (user == null) {
+				html.append(origion_str);
+			} else {
+				html.append("<a href='' onclick='jump2User("+user.getId()+");return false'>@");
+				html.append(str.trim());
+				html.append("</a> ");
+			}
+			lastIdx = matchr.end();
+		}
+		html.append(msg.substring(lastIdx));
+		return html.toString();
 	}
 }

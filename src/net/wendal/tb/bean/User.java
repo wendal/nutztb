@@ -22,6 +22,7 @@ public class User extends BaseBean {
 	
 	private static final long serialVersionUID = -630814528050174902L;
 
+	@JsonField(ignore=true)
 	@Column
 	@ColDefine(notNull=true, type = ColType.VARCHAR)
 	private String email;

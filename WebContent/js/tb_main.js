@@ -11,12 +11,6 @@ $(function() {
 			tb_ctx.my_uid = resp.data.id;
 		}
 		tb_ctx.uid = uid;
-		loadData(uid);
-	}, "json");
-	
-		$("#unfollow_me").hide();
-		$("#follow_me").hide();
-		
 		if (tb_ctx.login) {
 			$("#a_login").hide();
 			$("#a_regiter").hide();
@@ -25,6 +19,11 @@ $(function() {
 			$("#a_logout").hide();
 			$("#a_user_setting").hide();
 		}
+		loadData(uid);
+	}, "json");
+	
+		$("#unfollow_me").hide();
+		$("#follow_me").hide();
 		
 		if (uid != "me") {
 			$("#tweetForm").hide();
@@ -70,7 +69,6 @@ $(function() {
 		
 		//----------------------------------
 		$("#regForm").submit(function () {
-			$(this).attr("disable","disable");
 			var data = $(this).serialize();
 			$.post(tb_ctx.base+"/user/reg",data, function(resp) {
 				if (resp.ok) {
@@ -80,7 +78,6 @@ $(function() {
 				} else {
 					alert("注册失败! " + resp.msg);
 				}
-				$(this).removeattr("disable","disable");
 			},"json");
 			return false;
 		});
@@ -104,7 +101,7 @@ $(function() {
 			$.post(tb_ctx.base+"/user/login",data, function(resp) {
 				if (resp.ok) {
 					alert("登陆成功!");
-					window.location.reload();
+					window.location = tb_ctx.base + "/home/me";
 				} else {
 					alert("登陆失败! " + resp.msg);
 				}
@@ -150,6 +147,7 @@ $(function() {
 			$.post(tb_ctx.base+"/tweet", data, function(resp) {
 				if (resp.ok) {
 					alert("Tweet成功!");
+					window.location.reload();
 				} else {
 					alert("Tweet失败! " + resp.msg);
 				}
@@ -226,4 +224,10 @@ function unretweet(id) {
 			alert("Retweet Fail!! " + resp.msg);
 		}
 	}, "json");
+}
+
+function jump2User(user_id) {
+	var loc = tb_ctx.base + "/home/" + user_id;
+	window.location = loc;
+	return false;
 }

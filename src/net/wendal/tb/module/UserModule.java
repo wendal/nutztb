@@ -92,7 +92,9 @@ public class UserModule {
 				&& nickName.indexOf("<") < 0 
 				&& nickName.indexOf(">") < 0
 				&& nickName.indexOf("@") < 0
-				&& nickName.indexOf("#") < 0) {
+				&& nickName.indexOf("#") < 0
+				&& nickName.indexOf(" ") < 0
+				&& nickName.indexOf("&") < 0) {
 			try {
 				dao.update(User.class, Chain.make("nickName", nickName.trim()), Cnd.where("id", "=", me.getId()));
 			} catch (Throwable e) {

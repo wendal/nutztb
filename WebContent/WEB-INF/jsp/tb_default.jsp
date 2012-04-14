@@ -57,7 +57,7 @@ body {
 						<li><a href="" id="a_user_setting">设置</a></li>
 						<li>
 							<form action="#" id="updateForm" style="display: none;">
-							昵称:<input type="text" name="nickName"></input>
+							<div id="i_nickName">昵称:<input type="text" name="nickName"></input></div>
 							密码:<input type="password" name="passwd"></input>
 								<input type="submit" value="更新"></input>
 							</form>
