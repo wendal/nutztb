@@ -45,7 +45,7 @@ public class TwitterModule {
 		if (Strings.isBlank(content))
 			return Ajax.fail();
 		content = content.trim().intern();
-		content = content.replace('<', ' ').replace('>', ' '); //简单防html注入
+		content = content.replace('<', ' ').replace('>', ' ').replace("&#", "  "); //防html注入
 		if (content.length() > 140 || content.length() < 3)
 			return Ajax.fail();
 		session.setAttribute("last_tweet_time", System.currentTimeMillis());
