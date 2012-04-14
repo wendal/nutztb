@@ -1,0 +1,265 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*************Basic*************/
+*{
+	margin:0;
+	padding:0;
+}
+
+body{
+	/**background:url(images/Phones.png) no-repeat 95% 65% #000; */
+	background-color:#000000;
+}
+div.row{
+	margin:10px;
+	padding:5px;
+	
+}
+ 
+div.row label{
+	height:30px;
+	font-size:24px;
+	line-height:30px;
+	margin:0 10px;
+	color:#000000;
+}
+ 
+input.txt{
+	background-color:#F9EE70;
+	color:#333;
+	width:180px;
+	height:30px;
+	margin:0 8px;
+	font-size:24px;
+	line-height:30px;
+	border:none;
+	border-bottom:1px solid #565656;
+
+}
+ 
+input.txt:focus{
+	color:#333;
+	background-color: #FF0;
+	border-bottom:1px solid #F00;
+}
+
+input.btn{
+	width:75px;
+	height:30px;
+	margin-top:20px;
+	margin-right:30px;
+	margin-left:30px;
+}
+.ctx{
+	font:20px "Segoe UI Light","Segoe WPC","Segoe UI",Helvetica, Arial, "Arial Unicode MS", Sans-Serif;
+	line-height:20px;
+}
+.clear{
+	clear:both;
+}
+
+
+/*************Framework*************/
+#logo,#desc{
+	position:absolute;
+	right:30px;
+	font:72px "Segoe UI Light","Segoe WPC","Segoe UI",Helvetica, Arial, "Arial Unicode MS", Sans-Serif;
+	color:#FFF;
+	text-shadow: 0 0 150px #FFF, 0 0 60px #FFF, 0 0 10px #FFF;
+}
+#logo{
+	top:30px;
+}
+#desc{
+	top:100px;
+}
+.container{
+	background:#000;
+	width:370px;
+	height:690px;
+	margin:10px 20px;
+	border:2px solid #FFF;
+	border-radius:10px;
+	display:block;
+}
+
+
+.header{
+	display:block;
+	width:370px;
+	height:70px;
+}
+
+#time{
+	height:70px;
+	width:50px;
+	margin:10px;
+	float:right;
+	color:#FFF;
+	text-align:right;
+	font: bold 18px "Segoe UI Light","Segoe WPC","Segoe UI",Helvetica, Arial, "Arial Unicode MS", Sans-Serif;
+}
+
+.conentGroup{
+	width:370px;
+	height:530px;
+	overflow:hidden;
+}
+
+.content{
+	width:370px;
+	height:530px;
+}
+
+.content2{
+	
+	width:370px;
+	height:530px;
+	-webkit-transition:0.3s ease-in-out;
+	-moz-transition:0.3s ease-in-out;
+	-o-transition:0.3s ease-in-out;
+	
+	background-color:#F9EE70;
+	margin:30px auto;
+	padding:5px;
+	
+
+	font-family:"Î¢ÈíÑÅºÚ";
+	-webkit-box-shadow:4px 4px 5px #333;/*webkit*/ 
+	-moz-box-shadow:4px 4px 5px #333;/*firefox*/     
+	box-shadow:4px 4px 5px #333;/*opera»òie9*/ 
+
+}
+
+
+.content2 span{
+	height:90px;
+	width:360px;
+	float:left;
+	font:70px "Segoe UI Light","Segoe WPC","Segoe UI",Helvetica, Arial, "Arial Unicode MS", Sans-Serif;
+	line-height:90px;
+	color:#000000;
+}
+
+
+.skew{
+	-webkit-transform-origin:0 0;
+	-o-transform-origin:0 0;
+	-moz-transform-origin:0 0;
+	-ms-transform-origin:0 0;
+	transform-origin:0 0;
+	-webkit-transform:scale(0.7) translate(-135px,0px) rotateY(90deg);
+	-o-transform:scale(0.7) translate(-135px,0px) rotate(30deg);
+	-moz-transform:scale(0.7) translate(-135px,0px) rotate(30deg);
+	-ms-transform:scale(0.7) translate(-135px,0px) rotate(30deg);
+}
+
+.control{
+	width:370px;
+	height:50px;
+	border-radius:10px;
+	padding:10px;
+}
+
+.button{
+	width:32px;
+	height:32px;
+	cursor:pointer;
+}
+
+.left{
+	margin:10px 30px;
+	
+}
+
+.right{
+	margin:10px 30px;
+}
+
+
+.middle{
+	width:40px;
+	height:40px;
+	margin:10px 50px;
+	cursor:pointer;
+}
+
+.search{
+	position:absolute;
+	top:50px;
+	width:350px;
+	height:30px;
+	text-align:center;
+	display:none;
+	opacity:0.95;
+}
+.search input{
+	width:300px;
+	height:30px;
+	line-height:25px;
+}
+/*************Cards*************/
+.card{
+	float:left;
+	display:block;
+	width:125px;
+	height:125px;
+	margin:0 0 8px 8px;
+	-webkit-transition:0.09s ease-in-out;
+	-moz-transition:0.09s ease-in-out;
+	-o-transition:0.09s ease-in-out;
+	cursor:pointer;
+}
+
+.long img{
+	float:left;
+	display:block;
+	width:258px;
+	height:125px;
+}
+
+.long{
+	width:258px;
+	height:125px;
+	background:#00AEEF;
+}
+
+
+.card.cover{
+	-webkit-transform-origin:0 0;
+	-o-transform-origin:0 0;
+	-moz-transform-origin:0 0;
+	-ms-transform-origin:0 0;
+	transform-origin:0 0;
+	-webkit-transform:scale(1.3) translate(-35px,-30px) rotateY(90deg) skew(0deg,-30deg);
+	-o-transform:scale(1.1) translate(-35px,-30px)  skew(0deg,-30deg);
+	-moz-transform:scale(1.1) translate(-35px,-30px)  skew(0deg,-30deg);
+	-ms-transform:scale(1.1) translate(-35px,-30px) skew(0deg,-30deg);
+}
+
+
+.bar{
+	display:block;
+	float:right;
+	width:75px;
+	height:500px;
+	margin:0 0 8px 8px;
+}
+
+
+.back{
+	display:block;
+	width:30px;
+	height:30px;
+	border:3px solid #EFEFEF;
+	border-radius:60px;
+}
+
+
+.back img{
+	width:18px;
+	height:18px;
+	cursor:pointer;
+	padding:6px;
+}

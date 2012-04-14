@@ -41,6 +41,7 @@ public class PageModule {
 			req.getSession().setAttribute("theme", theme);
 		}
 		req.setAttribute("theme", theme);
+		req.setAttribute("theme_base", req.getContextPath() + "/theme/"+theme);
 		return id;
 	}
 	
