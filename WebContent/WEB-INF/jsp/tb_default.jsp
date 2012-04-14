@@ -17,8 +17,11 @@ body {
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+      <script src="${base}/js/html5.js"></script>
+<![endif]-->
+<!-- 载入console支持 -->
+<style type="text/css">@import '${base}/css/fauxconsole.css';</style>
+<script type="text/javascript" src="${base}/js/fauxconsole.js"></script>
 </head>
 <body>
 	<div class="navbar navbar-fixed-top">
@@ -114,5 +117,6 @@ body {
 		tb_ctx.base = "${base}";
 	</script>
 	<script type="text/javascript" src="${base}/js/tb_main.js"></script>
+	
 </body>
 </html>

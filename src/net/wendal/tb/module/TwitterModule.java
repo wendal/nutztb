@@ -45,6 +45,7 @@ public class TwitterModule {
 		if (Strings.isBlank(content))
 			return Ajax.fail();
 		content = content.trim().intern();
+		content = content.replace('<', ' ').replace('>', ' '); //简单防html注入
 		if (content.length() > 140 || content.length() < 3)
 			return Ajax.fail();
 		session.setAttribute("last_tweet_time", System.currentTimeMillis());
@@ -130,7 +131,7 @@ public class TwitterModule {
 	
 	@At({"/follow","/follow/?"})
 	public Object follow(long uid, @Attr("me") User me) {
-		User user = dao.fetch(User.class, Cnd.where("id", "=", uid));
+		User user = dao.fetch(User.class, uid);
 		if (user == null)
 			return Ajax.fail().setMsg("No such user!");
 		int count = dao.count("tb_following", Cnd.where("from_uid", "=", me.getFollowings()));

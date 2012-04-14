@@ -1,5 +1,6 @@
 package net.wendal.tb.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +11,9 @@ import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Prev;
 
-public abstract class BaseBean {
+public abstract class BaseBean implements Serializable {
+	
+	private static final long serialVersionUID = 7506502506839085403L;
 	
 	@Id(auto=false)
 	@Prev(els={@EL("$me.nextId()")})
@@ -27,7 +30,30 @@ public abstract class BaseBean {
 		return new Timestamp(System.currentTimeMillis());
 	}
 	
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof BaseBean))
+			return false;
+		BaseBean other = (BaseBean) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
 	public Timestamp getCreateTime() {
 		return createTime;
 	}

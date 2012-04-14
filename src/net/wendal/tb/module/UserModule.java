@@ -69,6 +69,7 @@ public class UserModule {
 				me.setEmail(email);
 				String passwd = R.sg(12).next();
 				me.setPasswd(xMD5(passwd));
+				me.setNickName("_"+me.getNickName());
 				dao.insert(me);
 				if (mailService.send(email, "推爸注册确认邮件", "Your password : " + passwd)) {
 					return Ajax.ok();
@@ -83,14 +84,23 @@ public class UserModule {
 	@Filters(@By(type=AjaxCheckSession.class, args="me"))
 	@At("/update")
 	public Object updateInfo(String nickName, String passwd, @Attr("me") User me, HttpSession session) {
-		if (!Strings.isBlank(nickName) && nickName.trim().length() > 1) {
+		if (!Strings.isBlank(nickName) 
+				&& !nickName.startsWith("_")        //系统默认生成的nickName以_开头
+				&& me.getNickName().startsWith("_") //只允许修改一次nickName
+				&& nickName.trim().length() > 1
+				&& nickName.trim().length() < 10
+				&& nickName.indexOf("<") < 0 
+				&& nickName.indexOf(">") < 0
+				&& nickName.indexOf("@") < 0
+				&& nickName.indexOf("#") < 0
+				&& nickName.indexOf("@") < 0) {
 			try {
 				dao.update(User.class, Chain.make("nickName", nickName.trim()), Cnd.where("id", "=", me.getId()));
 			} catch (Throwable e) {
-				return Ajax.fail().setMsg("Nickname is dup!");
+				return Ajax.fail().setMsg("Nickname is dup or it is BAD!");
 			}
 		}
-		if (!Strings.isBlank(passwd) && passwd.trim().length() > 5) {
+		if (!Strings.isBlank(passwd) && passwd.trim().length() > 5 && passwd.trim().length() < 40) {
 			dao.update(User.class, Chain.make("passwd", xMD5(passwd.trim())), Cnd.where("id", "=", me.getId()));
 		}
 		session.setAttribute("me", dao.fetch(User.class, Cnd.where("id", "=", me.getId())));

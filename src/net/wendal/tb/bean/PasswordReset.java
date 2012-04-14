@@ -11,6 +11,7 @@ import org.nutz.dao.entity.annotation.TableIndexes;
 			   @Index(fields={"token"}, name="reset_token", unique=true)})
 public class PasswordReset extends BaseBean {
 
+	private static final long serialVersionUID = 6657523245746027351L;
 	@Name
 	private long uid;
 	@Column

@@ -20,6 +20,8 @@ import org.nutz.lang.random.R;
 	           @Index(fields={"nickName"}, name="nickName", unique=true)})
 public class User extends BaseBean {
 	
+	private static final long serialVersionUID = -630814528050174902L;
+
 	@Column
 	@ColDefine(notNull=true, type = ColType.VARCHAR)
 	private String email;

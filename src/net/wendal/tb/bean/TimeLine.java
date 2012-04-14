@@ -14,6 +14,8 @@ import org.nutz.dao.entity.annotation.TableIndexes;
 			   @Index(fields={"uid","type","ref"}, name = "a_tweet", unique=true)})
 public class TimeLine extends BaseBean {
 	
+	private static final long serialVersionUID = -220942210095969277L;
+
 	@Column
 	private long uid;
 	

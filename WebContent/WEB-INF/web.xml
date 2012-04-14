@@ -17,6 +17,10 @@
 		<dispatcher>REQUEST</dispatcher> <!-- 这基本上是标准配置了,否则forward视图不会通过这个拦截器, J2EE的知识 -->
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
+	
+	<listener>
+		<listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
+	</listener>
   
   <welcome-file-list>
     <welcome-file>index</welcome-file>

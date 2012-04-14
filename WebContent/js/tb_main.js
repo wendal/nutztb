@@ -1,3 +1,9 @@
+function log(msg) {
+	if (console) {
+		console.log(msg);
+	}
+}
+
 $(function() {
 	$.get(tb_ctx.base+"/user/me", null, function(resp) {
 		if (resp.ok && resp.data) {
