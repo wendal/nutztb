@@ -1,7 +1,6 @@
 package net.wendal.tb.module;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import net.wendal.tb.bean.User;
 
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -77,9 +75,7 @@ public class TwitterModule {
 	}
 	
 	@At("/unretweet/?")
-	public void removeRetweet(String id, @Attr("me") User me) {
-		if (Strings.isBlank(id))
-			return;
+	public void removeRetweet(long id, @Attr("me") User me) {
 		dao.clear(TimeLine.class, Cnd.where("uid", "=", me.getId()).and("type", "=", 1).and("ref", "=", id));
 	}
 	
@@ -88,11 +84,15 @@ public class TwitterModule {
 		if (page < 1)
 			page = 1;
 		Pager pager = dao.createPager(page, 20);
-		Condition cnd = Cnd.format("uid=%d or uid in (select to_uid from tb_following where from_uid=%d) order by id desc", me.getId(), me.getId());
-		pager.setRecordCount(dao.count(TimeLine.class, cnd));
+		String cnd = String.format("(uid=%d and tp=0) or (id in (select ref from tb_timeline where uid=%d and tp=1)) " + /*本人原创及转发的记录*/
+				"or (uid in (select to_uid from tb_following where from_uid=%d) and tp=0) " + /*所关注的人原创的记录*/
+				"or (id in (select ref from tb_timeline where uid in (select to_uid from tb_following where from_uid=%d) and tp=1))",
+				me.getId(), me.getId(), me.getId(), me.getId()); /*所关注的人的转发记录*/
+		pager.setRecordCount(dao.count(TimeLine.class, Cnd.wrap(cnd)));
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("user", setCountData(me));
-		map.put("data", convert2VO(dao.query(TimeLine.class, cnd, pager)));
+		map.put("data", convert2VO(dao.query(TimeLine.class, Cnd.wrap(cnd + " order by id desc"), pager)));
+		map.put("pager", pager);
 		return map;
 	}
 	
@@ -102,26 +102,29 @@ public class TwitterModule {
 		if (page < 1)
 			page = 1;
 		Pager pager = dao.createPager(page, 20);
-		pager.setRecordCount(dao.count(TimeLine.class));
+		pager.setRecordCount(dao.count(TimeLine.class, Cnd.where("type", "=", 0)));
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("data", convert2VO(dao.query(TimeLine.class, Cnd.orderBy().desc("id"), pager)));
+		map.put("data", convert2VO(dao.query(TimeLine.class, Cnd.where("type", "=", 0).desc("id"), pager)));
+		map.put("pager", pager);
 		return map;
 	}
 	
 	@Filters()
 	@At("/u/?")
 	public Object user(long uid, int page) {
-		User user = dao.fetch(User.class, Cnd.where("id", "=", uid));
+		User user = dao.fetch(User.class, uid);
 		if (user == null)
 			return new HttpStatusView(404);
 		if (page < 1)
 			page = 1;
 		Pager pager = dao.createPager(page, 20);
-		pager.setRecordCount(dao.count(TimeLine.class, Cnd.where("uid", "=", uid)));
-		List<TimeLine> tls = dao.query(TimeLine.class, Cnd.where("uid", "=", uid).desc("id"), pager);
+		String str = String.format("(uid=%d and tp=0) or id in (select ref from tb_timeline where uid=%s and tp=1)", uid, uid);
+		pager.setRecordCount(dao.count(TimeLine.class, Cnd.wrap(str)));
+		List<TimeLine> tls = dao.query(TimeLine.class, Cnd.wrap(str+" order by id desc"), pager);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("user", setCountData(user));
 		map.put("data", convert2VO(tls));
+		map.put("pager", pager);
 		return map;
 	}
 	
@@ -153,7 +156,7 @@ public class TwitterModule {
 	public User setCountData(User user) {
 		user.setFollowingCount(dao.count("tb_following", Cnd.where("from_uid", "=", user.getId())));
 		user.setFollowedCount(dao.count("tb_following", Cnd.where("to_uid", "=", user.getId())));
-		user.setTweetCount(dao.count(TimeLine.class, Cnd.where("uid", "=", user.getId())));
+		user.setTweetCount(dao.count(TimeLine.class, Cnd.where("uid", "=", user.getId()).and("type", "=", 0)));
 		return user;
 	}
 	
@@ -173,38 +176,26 @@ public class TwitterModule {
 	
 	public Map<String, Object> convert2VO(TimeLine tl) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		switch (tl.getType()) {
-		case 0:
-			TbContent tc = dao.fetch(TbContent.class, tl.getRef());
-			if (tc == null)
-				return null;
-			map.put("txt", tc.getText());
-			map.put("retweet", false);
-			map.put("owner", dao.fetch(User.class, tl.getUid()));
-			break;
-		case 1:
-			TimeLine tl_ref = dao.fetch(TimeLine.class, tl.getRef());
-			if (tl_ref == null) {
-				return null;
-			}
-			TbContent tc2 = dao.fetch(TbContent.class, tl_ref.getRef());
-			if (tc2 == null)
-				map.put("txt", "Deleted by origin user!");
-			else
-				map.put("txt", tc2.getText());
-			map.put("owner", dao.fetch(User.class, tl_ref.getUid()));
-			map.put("retweet", true);
-			
-			break;
-		default:
-			return Collections.emptyMap();
-		}
-		//检查一下,是否我自己是否已经Retwee过
+		User owner = dao.fetch(User.class, tl.getUid());
 		User me = (User) Mvcs.getReq().getSession().getAttribute("me");
-		if (me != null) {
-			map.put("retweeted_by_me", 0 != dao.count(TimeLine.class, Cnd.where("uid", "=", me.getId()).and("type", "=", 1).and("ref", "=", tl.getRef())));
-		}
+		TbContent tc = dao.fetch(TbContent.class, tl.getRef());
+		if (tc == null)
+			return null;
 		map.put("id", tl.getId());
+		map.put("txt", tc.getText());
+		map.put("retweet", false);
+		map.put("owner", owner);
+		map.put("my_tweet", false);
+		map.put("retweeted_by_me", false);
+		if (me != null) {
+			if (me.getId() == owner.getId())
+				map.put("my_tweet", true);
+			else {
+				map.put("retweeted_by_me", 0 != dao.count(TimeLine.class, Cnd.where("uid", "=", me.getId()).and("type", "=", 1).and("ref", "=", tl.getId())));
+			}
+		}
+		List<User> retweetByUsers = dao.query(User.class, Cnd.format("id in (select uid from tb_timeline where uid=%d and tp=1 and ref=%d)", tl.getUid(), tl.getId()), dao.createPager(1, 5));
+		map.put("retweet_by_users", retweetByUsers);
 		return map;
 	}
 }

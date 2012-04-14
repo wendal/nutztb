@@ -24,7 +24,7 @@ body {
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="${base}/home">推爸!</a>
+				<a class="brand" href="${base}/home/index">推爸!</a>
 				<div class="nav-collapse">
 					<ul class="nav">
 						<li class="active"><a href="${base}/home">Home</a></li>

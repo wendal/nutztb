@@ -1,12 +1,13 @@
 package net.wendal.tb.module;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import net.wendal.tb.bean.User;
 
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
@@ -22,20 +23,32 @@ public class PageModule {
 	@At
 	public void index() {}
 	
-	private static final View HOME = new ServerRedirectView("/home");
-	
 	@At({"/home/?", "/home"})
-	@Ok("jsp:jsp.tb")
-	public Object home(String id, @Attr("me") User me) {
-		if ((id == null && me != null) || ("me".equals(id) && me != null))
-			return "me";
-		if (id == null || "index".equals(id))
-			return "index";
-		try {
-			long uid = Long.parseLong(id);
-			if (0 != dao.count(User.class, Cnd.where("id", "=", uid)))
-				return id;
-		} catch (Throwable e) {}
-		return HOME;
+	@Ok("jsp:jsp.tb_${a.theme}")
+	public Object home(String id, @Attr("me") User me, @Attr("theme") String theme, HttpServletRequest req) {
+		if (id == null) {
+			if (me != null)
+				return new ServerRedirectView("/home/me");
+			else
+				return new ServerRedirectView("/home/index");
+		}
+		if (me != null && (""+me.getId()).equals(id))
+			return new ServerRedirectView("/home/me");
+		if ("me".equals(id) && me == null)
+			return new ServerRedirectView("/home/index");
+		if (theme == null) {
+			theme = "default";
+			req.getSession().setAttribute("theme", theme);
+		}
+		req.setAttribute("theme", theme);
+		return id;
+	}
+	
+	@At({"/theme", "/theme/?"})
+	public Object theme(String theme, @Attr("theme") String session_theme, HttpSession session) {
+		if (theme == null)
+			return session_theme;
+		session.setAttribute("theme", theme);
+		return theme;
 	}
 }

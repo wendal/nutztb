@@ -1,25 +1,17 @@
 $(function() {
 	$.get(tb_ctx.base+"/user/me", null, function(resp) {
-		if (resp.data) {
-			if (uid == "index" || uid == resp.data.id) {
-				uid = "me";
-			}
+		if (resp.ok && resp.data) {
 			tb_ctx.login = true;
 			tb_ctx.my_uid = resp.data.id;
-		} else if (uid == "index") {
-			console.log("Not login yet, use default index");
 		}
-		console.log("UID=" + uid);
 		tb_ctx.uid = uid;
 		loadData(uid);
 	}, "json");
-});
-
-$(function() {
+	
 		$("#unfollow_me").hide();
 		$("#follow_me").hide();
 		
-		if (uid == "me") {
+		if (tb_ctx.login) {
 			$("#a_login").hide();
 			$("#a_regiter").hide();
 			$("#a_forget_passwd").hide();
@@ -43,17 +35,29 @@ $(function() {
 		});
 		$("#a_login").click(function () {
 			$("#loginForm").toggle("show");
+			$("#regForm").hide();
+			$("#passwdresetForm").hide();
+			$("#updateForm").hide();
 			return false;
 		});
 		$("#a_regiter").click(function () {
+			$("#loginForm").hide();
 			$("#regForm").toggle("show");
+			$("#passwdresetForm").hide();
+			$("#updateForm").hide();
 			return false;
 		});
 		$("#a_forget_passwd").click(function () {
+			$("#loginForm").hide();
+			$("#regForm").hide();
 			$("#passwdresetForm").toggle("show");
+			$("#updateForm").hide();
 			return false;
 		});
 		$("#a_user_setting").click(function () {
+			$("#loginForm").hide();
+			$("#regForm").hide();
+			$("#passwdresetForm").hide();
 			$("#updateForm").toggle("show");
 			return false;
 		});
@@ -65,7 +69,7 @@ $(function() {
 			$.post(tb_ctx.base+"/user/reg",data, function(resp) {
 				if (resp.ok) {
 					alert("注册成功! 密码已经发送到您的邮箱,请查收!!");
-					$(this).hide();
+					$("#regForm").hide();
 					//window.location = "${base}/";
 				} else {
 					alert("注册失败! " + resp.msg);
@@ -80,7 +84,7 @@ $(function() {
 			$.post(tb_ctx.base+"/user/passwd/reset",data, function(resp) {
 				if (resp.ok) {
 					alert("密码重置,申请成功!! 请查收邮件!");
-					$(this).hide();
+					$("#passwdresetForm").hide();
 					//window.location = "${base}/";
 				} else {
 					alert("密码重置,申请失败! " + resp.msg);
@@ -107,7 +111,7 @@ $(function() {
 			$.post(tb_ctx.base+"/user/update",data, function(resp) {
 				if (resp.ok) {
 					alert("更新成功!");
-					$(this).hide();
+					$("#updateForm").hide();
 					//window.location = "${base}/";
 				} else {
 					alert("更新失败! " + resp.msg);
@@ -133,6 +137,18 @@ $(function() {
 					$("#follow_me").hide();
 				}, "json");
 			}
+		});
+		
+		$("#tweetForm").submit(function() {
+			var data = $(this).serialize();
+			$.post(tb_ctx.base+"/tweet", data, function(resp) {
+				if (resp.ok) {
+					alert("Tweet成功!");
+				} else {
+					alert("Tweet失败! " + resp.msg);
+				}
+				}, "json");
+			return false;
 		});
 });
 
@@ -162,26 +178,12 @@ function loadData(uid) {
 							}
 						}
 					}, "json");
-				$("#tweetForm").hide();
-			} else {
-				$("#tweetForm").show();
-				$("#tweetForm").submit(function() {
-					var data = $(this).serialize();
-					$.post(tb_ctx.base+"/tweet", data, function(resp) {
-						if (resp.ok) {
-							alert("Tweet成功!");
-						} else {
-							alert("Tweet失败! " + resp.msg);
-						}
-						}, "json");
-					return false;
-				});
 			}
 		}
 		if (resp.data.data) {
 			renderData(resp.data.data);
 		}
-		}, "json");
+	}, "json");
 }
 
 function renderData(data) {
@@ -195,7 +197,7 @@ function renderData(data) {
 			}).render(d);
 		timeline.append(html);
 	}
-	timeline.append("");
+	//timeline.append("");
 }
 
 function retweet(id) {
@@ -209,13 +211,13 @@ function retweet(id) {
 	}, "json");
 }
 
-	function unretweet(id) {
-		$.get(tb_ctx.base+"/unretweet/" + id, null, function(resp) {
-			if (resp.ok) {
-				$("#tweet_" + id).html("Retweet");
-				$("#tweet_" + id).attr("onclick", "retweet(" + id + ");");
-			} else {
-				alert("Retweet Fail!! " + resp.msg);
-			}
-		}, "json");
-	}
+function unretweet(id) {
+	$.get(tb_ctx.base+"/unretweet/" + id, null, function(resp) {
+		if (resp.ok) {
+			$("#tweet_" + id).html("Retweet");
+			$("#tweet_" + id).attr("onclick", "retweet(" + id + ");");
+		} else {
+			alert("Retweet Fail!! " + resp.msg);
+		}
+	}, "json");
+}

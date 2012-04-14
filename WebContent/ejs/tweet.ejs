@@ -2,16 +2,13 @@
 	<a href="<%=ctx.base%>/home/<%=owner.id%>">@<%=owner.nickName%></a><p/>
 	<h3><%=txt %></h3>
 	<p/>
-	<% if (ctx.login && ctx.uid != "me") { %>
-		<% if (retweeted_by_me) { %>
-		<button id="tweet_<%=id%>" onclick="unretweet(<%=id%>);">Undo Retweet</button>
+	<% 
+	if (ctx.login && !my_tweet) {
+		if (retweeted_by_me) { %>
+			<button id="tweet_<%=id%>" onclick="unretweet(<%=id%>);">Undo Retweet</button>
 		<% } else { %>
-		<button id="tweet_<%=id%>" onclick="retweet(<%=id%>);">Retweet</button>
-		<% } %>
-	<% } %>
-	<% if (ctx.login && ctx.uid == "me") { %>
-		<% if (retweeted_by_me) { %>
-		<button id="tweet_<%=id%>" onclick="unretweet(<%=id%>);">Undo Retweet</button>
-		<% } %>
-	<% } %>
+				<button id="tweet_<%=id%>" onclick="retweet(<%=id%>);">Retweet</button>
+		<% }
+	 } 
+	 %>
 </div>
