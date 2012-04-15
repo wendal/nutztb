@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import net.wendal.tb.bean.BaseBean;
 import net.wendal.tb.bean.SystemInfo;
+import net.wendal.tb.service.MailService;
 import net.wendal.tb.tool.Tbs;
 
 import org.nutz.dao.Dao;
@@ -38,6 +39,8 @@ public class TbSetup implements Setup {
 			dao.insert(info);
 		}
 		Tbs.md5_key = info.getData();
+		
+		config.getIoc().get(MailService.class);
 	}
 
 	public void destroy(NutConfig config) {

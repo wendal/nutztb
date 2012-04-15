@@ -71,7 +71,7 @@ public class UserModule {
 				me.setPasswd(xMD5(passwd));
 				me.setNickName("_"+me.getNickName());
 				dao.insert(me);
-				if (mailService.send(email, "推爸注册确认邮件", "Your password : " + passwd)) {
+				if (mailService.add2Queue(email, "推爸注册确认邮件", "Your password : " + passwd)) {
 					return Ajax.ok();
 				} else {
 					dao.delete(me);
@@ -122,7 +122,7 @@ public class UserModule {
 		reset.setToken(token);
 		dao.insert(reset);
 		String url = req.getRequestURL() +"/callback?token=" + token;
-		mailService.send(email, "推爸 密码重置请求", "Reset URL --> " + url);
+		mailService.add2Queue(email, "推爸 密码重置请求", "Reset URL --> " + url);
 	}
 	
 	@At("/passwd/reset/callback") 
@@ -135,7 +135,7 @@ public class UserModule {
 			String passwd = R.sg(12).next();
 			dao.update(User.class, Chain.make("passwd", xMD5(passwd)), Cnd.where("id", "=", reset.getUid()));
 			String email = dao.fetch(User.class, Cnd.where("id", "=", reset.getUid())).getEmail();
-			mailService.send(email, "推爸密码重置邮件", "Your password : " + passwd);
+			mailService.add2Queue(email, "推爸密码重置邮件", "Your password : " + passwd);
 			return Ajax.ok().setMsg("Reset success!! Check you email!");
 		}
 		return Ajax.fail().setMsg("Token not found!!");
